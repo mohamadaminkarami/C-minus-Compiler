@@ -8,3 +8,9 @@ class TokenType(Enum):
     SYMBOL = "SYMBOL"
     COMMENT = "COMMENT"
     WHITESPACE = "WHITESPACE"
+
+    def __str__(self) -> str:
+        return self.value
+
+    def should_be_return(self):
+        return self not in [TokenType.COMMENT, TokenType.WHITESPACE]
