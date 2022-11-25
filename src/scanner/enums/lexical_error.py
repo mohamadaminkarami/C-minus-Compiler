@@ -6,3 +6,6 @@ class LexicalError(Enum):
     UNCLOSED_COMMENT = "Unclosed comment"
     UNMATCHED_COMMENT = "Unmatched comment"
     INVALID_NUMBER = "Invalid number"
+
+    def __str__(self) -> str:
+        return self.value

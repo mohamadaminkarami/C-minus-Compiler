@@ -1,7 +1,4 @@
-from xml.dom.pulldom import ErrorHandler
-
-
-class _ErrorHandler:
+class ErrorHandler:
     def __init__(self) -> None:
         self._has_lexical_error = False
 

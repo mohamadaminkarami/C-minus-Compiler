@@ -1,5 +1,5 @@
 from typing import List
-from scanner.constants import KEYWORDS
+from constants import KEYWORDS
 
 
 class SymbolTableRow:
@@ -18,3 +18,6 @@ class SymbolTable:
 
     def add_row(self, symbol_table_row: SymbolTableRow):
         self._table.append(symbol_table_row)
+
+
+symbol_table = SymbolTable()
