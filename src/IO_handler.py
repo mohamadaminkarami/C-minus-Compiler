@@ -22,7 +22,7 @@ class IOHandler:
             file.write("There is no lexical error.")
         else:
             for line_number, lexical_error_list in lexical_errors.items():
-                file.write(f"{line_number}.\t{self._list_to_str(lexical_error_list)}")
+                file.write(f"{line_number}.\t{self._list_to_str(lexical_error_list)}\n")
 
         file.close()
 
@@ -30,7 +30,7 @@ class IOHandler:
         file = open("tokens.txt", "w+")
 
         for line_number, token_list in tokens.items():
-            file.write(f"{line_number}.\t{self._list_to_str(token_list)}")
+            file.write(f"{line_number}.\t{self._list_to_str(token_list)}\n")
 
         file.close()
 
@@ -38,7 +38,7 @@ class IOHandler:
         file = open("symbol_table.txt", "w+")
 
         for index, symbol_table_row in enumerate(symbols):
-            file.write(f"{index + 1}.\t{symbol_table_row}")
+            file.write(f"{index + 1}.\t{symbol_table_row}\n")
         file.close()
 
 

@@ -131,8 +131,8 @@ class Scanner:
                 self._current_state = 0
 
             if self._is_final_state():
-                token_type = self._get_token_type()
                 self._handle_extra_char_read()
+                token_type = self._get_token_type()
                 lexeme = self._get_lexeme()
 
                 self._start_cursor = self._end_cursor
