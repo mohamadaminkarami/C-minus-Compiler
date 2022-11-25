@@ -30,7 +30,7 @@ class StateInitial(State):
         elif c.isdigit():
             return StateNum
         elif c in SYMBOLS:
-            return StateSymbol if c == '=' or c == '*' else State.END  # symbols that need lookahead
+            return StateSymbol if c == '=' or c == '*' else StateEnd  # symbols that need lookahead
         elif c == '/':
             return StateUndecided
         else:
@@ -88,10 +88,3 @@ class StateEnd(State):
         else:
             return LexicalError.INVALID_NUMBER
 
-
-class StateSymbol(State):
-    def get_next_token(self, c):
-        if token.content == '*/' or not is_accepted_character(c):
-            return LexicalError.INVALID_NUMBER
-        elif not token.content == '==' and is_accepted_character(c):
-            return StateEnd
