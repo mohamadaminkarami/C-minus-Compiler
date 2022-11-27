@@ -5,8 +5,10 @@ from symbol_table import SymbolTableRow
 
 
 class IOHandler:
-    def read_input(self):
-        file = open("input.txt", "r")
+    def read_input(self, num):
+        self.num = num
+
+        file = open(f"./tests/T{num}/input.txt", "r")
         return file.read()
 
     def _list_to_str(self, l: List[Tuple[str, str]]) -> str:
@@ -17,7 +19,7 @@ class IOHandler:
         return s
 
     def write_lexical_errors(self, lexical_errors: Dict[int, List[Tuple[str, str]]]):
-        file = open("lexical_errors.txt", "w+")
+        file = open(f"./res/T{self.num}/lexical_errors.txt", "w+")
         if len(lexical_errors.keys()) == 0:
             file.write("There is no lexical error.")
         else:
@@ -27,7 +29,7 @@ class IOHandler:
         file.close()
 
     def write_tokens(self, tokens: Dict[int, List[Tuple[TokenType, str]]]):
-        file = open("tokens.txt", "w+")
+        file = open(f"./res/T{self.num}/tokens.txt", "w+")
 
         for line_number, token_list in tokens.items():
             file.write(f"{line_number}.\t{self._list_to_str(token_list)}\n")
@@ -35,7 +37,7 @@ class IOHandler:
         file.close()
 
     def write_symbol_tables(self, symbols: List[SymbolTableRow]):
-        file = open("symbol_table.txt", "w+")
+        file = open(f"./res/T{self.num}/symbol_table.txt", "w+")
 
         for index, symbol_table_row in enumerate(symbols):
             file.write(f"{index + 1}.\t{symbol_table_row}\n")

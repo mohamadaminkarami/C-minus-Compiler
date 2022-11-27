@@ -13,6 +13,7 @@ class Scanner:
     def __init__(self, input: str) -> None:
         self.line_number = 1
         self._current_state = 0
+        self._open_comment_line = 1
 
         self._input = input
 
@@ -23,8 +24,9 @@ class Scanner:
 
     def _get_next_state(self, char: str):
         # initial State
-        if not is_accepted_character(char):
-            raise Exception(LexicalError.INVALID_INPUT)
+        if self._current_state not in [11, 12, 13, 14, 15]:
+            if not is_accepted_character(char):
+                raise Exception(LexicalError.INVALID_INPUT)
 
         if self._current_state == 0:
             if char.isdigit():
@@ -63,6 +65,7 @@ class Scanner:
             return 9
 
         if self._current_state == 10:
+            self._open_comment_line = self.line_number
             if char == "*":
                 return 11
             if char == "/":
@@ -82,8 +85,9 @@ class Scanner:
             return 11
 
         if self._current_state == 14:
-            if char == "\n":
+            if char == "\n" or self.is_eof():
                 return 15
+            return 14
 
         if self._current_state == 17:
             if char == "/":
@@ -112,7 +116,7 @@ class Scanner:
         raise Exception("_get_token_type should call after _is_final_state")
 
     def _get_lexeme(self) -> str:
-        return self._input[self._start_cursor: self._end_cursor]
+        return self._input[self._start_cursor : self._end_cursor]
 
     def is_eof(self):
         return len(self._input) == self._end_cursor
@@ -121,7 +125,6 @@ class Scanner:
         while not self.is_eof():
             char = self._input[self._end_cursor]
             self._end_cursor += 1
-
             try:
                 self._current_state = self._get_next_state(char)
             except Exception as lexical_error:
@@ -135,7 +138,6 @@ class Scanner:
                 self._handle_extra_char_read()
                 token_type = self._get_token_type()
                 lexeme = self._get_lexeme()
-
                 self._start_cursor = self._end_cursor
                 self._current_state = 0
 
@@ -147,7 +149,9 @@ class Scanner:
 
         if self._current_state in [11, 12]:
             error_handler.write_lexical_error(
-                self.line_number, self._get_lexeme(), str(LexicalError.UNCLOSED_COMMENT)
+                self._open_comment_line,
+                f"{self._get_lexeme()[:7]}...",
+                str(LexicalError.UNCLOSED_COMMENT),
             )
 
-        return NotImplemented
+        return TokenType.EOF, ""
