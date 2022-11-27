@@ -4,6 +4,7 @@ from scanner.enums import TokenType
 from error_handler import error_handler
 from constants import SINGLE_SYMBOLES, WHITESPACES
 from scanner.enums.lexical_error import LexicalError
+from symbol_table import symbol_table
 
 from utils import is_keyword, is_accepted_character
 
@@ -111,10 +112,10 @@ class Scanner:
         raise Exception("_get_token_type should call after _is_final_state")
 
     def _get_lexeme(self) -> str:
-        return self._input[self._start_cursor : self._end_cursor]
+        return self._input[self._start_cursor: self._end_cursor]
 
     def is_eof(self):
-        return len(self._input) - 1 == self._end_cursor
+        return len(self._input) == self._end_cursor
 
     def get_next_token(self) -> Tuple[TokenType, str]:
         while not self.is_eof():

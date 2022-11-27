@@ -12,7 +12,7 @@ class IOHandler:
     def _list_to_str(self, l: List[Tuple[str, str]]) -> str:
         s = ""
         for i, v in l:
-            s += f"({i}, {v})"
+            s += f"({i}, {v}) "
 
         return s
 
