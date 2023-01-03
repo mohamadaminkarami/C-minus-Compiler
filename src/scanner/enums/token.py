@@ -8,7 +8,7 @@ class TokenType(Enum):
     SYMBOL = "SYMBOL"
     COMMENT = "COMMENT"
     WHITESPACE = "WHITESPACE"
-    EOF = "EOF"
+    EOF = "$"
 
     def __str__(self) -> str:
         return self.value

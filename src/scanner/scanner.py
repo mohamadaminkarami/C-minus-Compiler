@@ -4,9 +4,18 @@ from scanner.enums import TokenType
 from error_handler import error_handler
 from constants import SINGLE_SYMBOLES, WHITESPACES
 from scanner.enums.lexical_error import LexicalError
-from symbol_table import symbol_table
-
+from symbol_table import SymbolTableRow, symbol_table
+from dataclasses import dataclass
 from utils import is_keyword, is_accepted_character
+
+
+@dataclass(frozen=True)
+class Token:
+    lexeme: str
+    token_type: TokenType
+
+    def __str__(self) -> str:
+        return f"({self.token_type.value}, {self.lexeme})"
 
 
 class Scanner:
@@ -20,7 +29,7 @@ class Scanner:
         self._start_cursor = 0
         self._end_cursor = 0
 
-        self.tokens: Dict[int, List[Tuple[TokenType, str]]] = defaultdict(list)
+        self.tokens: Dict[int, List[Token]] = defaultdict(list)
 
     def _get_next_state(self, char: str):
         # initial State
@@ -121,7 +130,7 @@ class Scanner:
     def is_eof(self):
         return len(self._input) == self._end_cursor
 
-    def get_next_token(self) -> Tuple[TokenType, str]:
+    def get_next_token(self) -> Token:
         while not self.is_eof():
             char = self._input[self._end_cursor]
             self._end_cursor += 1
@@ -138,12 +147,18 @@ class Scanner:
                 self._handle_extra_char_read()
                 token_type = self._get_token_type()
                 lexeme = self._get_lexeme()
+                if token_type == TokenType.ID:
+                    if not symbol_table.is_lexeme_exist(lexeme):
+                        symbol_table.add_row(SymbolTableRow(lexeme))
+
                 self._start_cursor = self._end_cursor
                 self._current_state = 0
 
                 if token_type.should_be_return():
-                    self.tokens[self.line_number].append((token_type, lexeme))
-                    return token_type, lexeme
+                    self.tokens[self.line_number].append(
+                        Token(token_type=token_type, lexeme=lexeme)
+                    )
+                    return Token(lexeme=lexeme, token_type=token_type)
             if char == "\n":
                 self.line_number += 1
 
@@ -154,4 +169,4 @@ class Scanner:
                 str(LexicalError.UNCLOSED_COMMENT),
             )
 
-        return TokenType.EOF, ""
+        return Token(token_type=TokenType.EOF, lexeme="$")
