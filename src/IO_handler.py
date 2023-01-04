@@ -51,11 +51,13 @@ class IOHandler:
         file.close()
 
     def write_parse_tree(self, parent: Node):
-        file = open(f"./p2_res/T{self.num}/parse_tree.txt", "w+")
-        # file = open(f"parse_tree.txt", "w+")  # for quera judge
+        tree_str = ''
         for pre, fill, node in RenderTree(parent):
-            file.write("%s%s\n" % (pre, node.name))
-        pass
+            tree_str += "%s%s" % (pre, node.name) + '\n'
+        f = open(f"./p2_res/T{self.num}/parse_tree.txt", "w", encoding='utf-8')
+        # file = open(f"parse_tree.txt", "w+")  # for quera judge
+        f.write(tree_str.strip())
+        f.close()
 
     def write_syntax_errors(self, syntax_errors: List[str]):
         file = open(f"./p2_res/T{self.num}/syntax_errors.txt", "w+")

@@ -94,6 +94,7 @@ class Parser:
             error_handler.write_syntax_error(
                 f"#{self._get_line_number()} : {str(SyntaxErrors.UNXEPECTED_EOF)}"
             )
+            self.tree.pop()
             return True
 
         error_handler.write_syntax_error(
@@ -129,6 +130,7 @@ class Parser:
 
         self.stack.push(non_terminal)
         self.stack.push(next_state)
+        self.tree.push(Node(str(non_terminal)))
         error_handler.write_syntax_error(
             f"#{self._get_line_number()} : {str(SyntaxErrors.MISSING)} {non_terminal}"
         )
