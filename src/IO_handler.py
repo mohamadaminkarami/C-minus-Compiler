@@ -1,3 +1,4 @@
+from anytree import Node, RenderTree
 from typing import Dict, List, Tuple
 from scanner.enums.token import TokenType
 
@@ -49,7 +50,11 @@ class IOHandler:
             file.write(f"{index + 1}.\t{symbol_table_row}\n")
         file.close()
 
-    def write_parse_tree(self):
+    def write_parse_tree(self, parent: Node):
+        file = open(f"./p2_res/T{self.num}/parse_tree.txt", "w+")
+        # file = open(f"parse_tree.txt", "w+")  # for quera judge
+        for pre, fill, node in RenderTree(parent):
+            file.write("%s%s\n" % (pre, node.name))
         pass
 
     def write_syntax_errors(self, syntax_errors: List[str]):

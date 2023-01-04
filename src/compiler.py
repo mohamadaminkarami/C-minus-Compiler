@@ -14,6 +14,7 @@ class Compiler:
     def compile(self):
         self.parser.parse()
         IO_handler.write_syntax_errors(error_handler._syntax_errors)
+        IO_handler.write_parse_tree(self.parser.tree.get())
 
 
 if __name__ == "__main__":

@@ -15,7 +15,11 @@ class Token:
     token_type: TokenType
 
     def __str__(self) -> str:
-        return f"({self.token_type.value}, {self.lexeme})"
+        return (
+            self.lexeme
+            if self.token_type == TokenType.EOF
+            else f"({self.token_type.value}, {self.lexeme})"
+        )
 
 
 class Scanner:
