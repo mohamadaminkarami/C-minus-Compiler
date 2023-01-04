@@ -94,7 +94,7 @@ class Parser:
             error_handler.write_syntax_error(
                 f"#{self._get_line_number()} : {str(SyntaxErrors.UNXEPECTED_EOF)}"
             )
-            self.tree.pop()
+            self.tree = Stack()
             return True
 
         error_handler.write_syntax_error(
@@ -121,6 +121,7 @@ class Parser:
                 error_handler.write_syntax_error(
                     f"#{self._get_line_number()} : {str(SyntaxErrors.UNXEPECTED_EOF)}"
                 )
+                self.tree = Stack()
                 return True
             error_handler.write_syntax_error(
                 f"#{self._get_line_number()} : {str(SyntaxErrors.DISCARDED)} {self.current_token.lexeme} from input"

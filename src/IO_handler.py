@@ -52,8 +52,9 @@ class IOHandler:
 
     def write_parse_tree(self, parent: Node):
         tree_str = ''
-        for pre, fill, node in RenderTree(parent):
-            tree_str += "%s%s" % (pre, node.name) + '\n'
+        if parent:
+            for pre, fill, node in RenderTree(parent):
+                tree_str += "%s%s" % (pre, node.name) + '\n'
         f = open(f"./p2_res/T{self.num}/parse_tree.txt", "w", encoding='utf-8')
         # file = open(f"parse_tree.txt", "w+")  # for quera judge
         f.write(tree_str.strip())
