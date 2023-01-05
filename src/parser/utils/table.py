@@ -4,7 +4,7 @@ from parser.enums import Actions
 
 
 class Table:
-    TABLE_PATH = "src/parser/assets/table.json"
+    TABLE_PATH = "./parser/assets/table.json"
 
     def __init__(self) -> None:
         self._table = json.load(open(self.TABLE_PATH))
