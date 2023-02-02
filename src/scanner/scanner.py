@@ -152,8 +152,8 @@ class Scanner:
                 token_type = self._get_token_type()
                 lexeme = self._get_lexeme()
                 if token_type == TokenType.ID:
-                    if not symbol_table.is_lexeme_exist(lexeme):
-                        symbol_table.add_row(SymbolTableRow(lexeme))
+                    if not symbol_table.does_lexeme_exist(lexeme):
+                        symbol_table.add_row(lexeme=lexeme)
 
                 self._start_cursor = self._end_cursor
                 self._current_state = 0

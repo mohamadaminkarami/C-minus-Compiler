@@ -5,7 +5,7 @@ class SyntaxErrors(Enum):
     ILLEGAL = "illegal"
     DISCARDED = "discarded"
     MISSING = "missing"
-    UNXEPECTED_EOF = "Unexpected EOF"
+    UNEXPECTED_EOF = "Unexpected EOF"
 
     def __str__(self) -> str:
         return f"syntax error , {self.value}"

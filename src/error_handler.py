@@ -8,7 +8,6 @@ class ErrorHandler:
         self._syntax_errors: List[str] = []
 
     def write_syntax_error(self, error_message: str):
-        print(error_message)
         self._syntax_errors.append(error_message)
 
     def write_lexical_error(self, line_number: int, lexeme: str, error_message: str):

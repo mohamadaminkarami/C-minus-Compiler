@@ -1,17 +1,18 @@
-from typing import Dict, List, Tuple
+from typing import List
 from IO_handler import IO_handler
 from scanner.enums.token import TokenType
-from symbol_table import SymbolTableRow, symbol_table
 from error_handler import error_handler
 from parser.enums import Actions, SyntaxErrors
-from scanner import Scanner, Token
-from anytree import Node, RenderTree
+from scanner import Scanner
+from anytree import Node
 from parser.utils import Table, Stack
+from code_gen import CodeGenerator
+from symbol_table import symbol_table
 
 
 class Parser:
     INITIAL_STATE = "0"
-    FILE_NAME = "07"
+    FILE_NAME = "16"
 
     def __init__(self) -> None:
         self.table = Table()
@@ -25,6 +26,10 @@ class Parser:
 
         self._last_tree_nodes: List[Node] = []
         self._parent_node = None
+
+        self._code_gen = CodeGenerator()
+
+        self.CODE_GEN_STATES = self._code_gen.get_code_gen_states()
 
     def _get_line_number(self):
         return self.scanner.line_number
@@ -63,6 +68,9 @@ class Parser:
         _, next_state = self.table.parse_table(s, left_hand_side)
         self.stack.push(next_state)
 
+    def _handle_code_gen(self, state: str):
+        self._code_gen.generate(state, self.current_token.lexeme)
+
     def _handle_action(self, action: Actions, state: str) -> bool:
         if action == Actions.ACCEPT:
             child = self.tree.pop()
@@ -72,6 +80,11 @@ class Parser:
             return True
 
         elif action == Actions.REDUCE:
+            if state in self.CODE_GEN_STATES:
+                self._handle_code_gen(state)
+                print("ss", self._code_gen._ss)
+                print("pb", self._code_gen._pb)
+                print("table", symbol_table)
             self._handle_reduce(state)
 
         elif action == Actions.SHIFT:
@@ -92,7 +105,7 @@ class Parser:
     def _panic(self) -> bool:
         if self.current_token.token_type == TokenType.EOF:
             error_handler.write_syntax_error(
-                f"#{self._get_line_number()} : {str(SyntaxErrors.UNXEPECTED_EOF)}"
+                f"#{self._get_line_number()} : {str(SyntaxErrors.UNEXPECTED_EOF)}"
             )
             self.tree = Stack()
             return True
@@ -119,7 +132,7 @@ class Parser:
         while not non_terminal:
             if self.current_token.token_type == TokenType.EOF:
                 error_handler.write_syntax_error(
-                    f"#{self._get_line_number()} : {str(SyntaxErrors.UNXEPECTED_EOF)}"
+                    f"#{self._get_line_number()} : {str(SyntaxErrors.UNEXPECTED_EOF)}"
                 )
                 self.tree = Stack()
                 return True
@@ -152,3 +165,6 @@ class Parser:
 
                 if is_finished:
                     return
+
+    def get_program_block(self):
+        return self._code_gen._pb
