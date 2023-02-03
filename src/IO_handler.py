@@ -1,4 +1,3 @@
-from anytree import Node, RenderTree
 from typing import Dict, List, Tuple
 from scanner.enums.token import TokenType
 from code_gen import Actions
@@ -50,16 +49,6 @@ class IOHandler:
             file.write(f"{index + 1}.\t{symbol_table_row}\n")
         file.close()
 
-    def write_parse_tree(self, parent: Node):
-        tree_str = ""
-        if parent:
-            for pre, fill, node in RenderTree(parent):
-                tree_str += "%s%s" % (pre, node.name) + "\n"
-        file = open(f"../p3_res/T{self.num}/parse_tree.txt", "w")  # for testing
-        # file = open(f"parse_tree.txt", "w+")  # for quera judge
-        file.write(tree_str.strip())
-        file.close()
-
     def write_syntax_errors(self, syntax_errors: List[str]):
         file = open(f"../p3_res/T{self.num}/syntax_errors.txt", "w+")  # for testing
         # file = open(f"syntax_errors.txt", "w+")  # for quera judge
@@ -82,7 +71,7 @@ class IOHandler:
 
     def write_semantic_errors(self):
         file = open(f"semantic_errors.txt", "w+")  # for quera judge
-        file.write("The input program is semantically correct.")
+        file.write("The input program is semantically correct.\n")
         file.close()
 
 

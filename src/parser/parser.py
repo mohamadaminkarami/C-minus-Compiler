@@ -4,7 +4,6 @@ from scanner.enums.token import TokenType
 from error_handler import error_handler
 from parser.enums import Actions, SyntaxErrors
 from scanner import Scanner
-from anytree import Node
 from parser.utils import Table, Stack
 from code_gen import CodeGenerator
 from symbol_table import symbol_table
@@ -19,13 +18,8 @@ class Parser:
         self.stack = Stack()
         self.stack.push(self.INITIAL_STATE)
 
-        self.tree = Stack()
-
         self.scanner = Scanner(IO_handler.read_input(self.FILE_NAME))
         self._set_next_token()
-
-        self._last_tree_nodes: List[Node] = []
-        self._parent_node = None
 
         self._code_gen = CodeGenerator()
 
@@ -50,17 +44,6 @@ class Parser:
             0 if "epsilon" in right_hand_side else len(right_hand_side)
         )
 
-        # tree
-        parent = Node(left_hand_side)
-        if right_hand_side_length == 0:
-            child = Node("epsilon", parent=parent)
-
-        children = self.tree.muliti_pop(right_hand_side_length)
-
-        for child in children:
-            child.parent = parent
-        self.tree.push(parent)
-
         # stack
         self.stack.muliti_pop(2 * right_hand_side_length)
         s = self.stack.get()
@@ -73,10 +56,6 @@ class Parser:
 
     def _handle_action(self, action: Actions, state: str) -> bool:
         if action == Actions.ACCEPT:
-            child = self.tree.pop()
-            parent = self.tree.get()
-            child.parent = parent
-
             return True
 
         elif action == Actions.REDUCE:
@@ -88,7 +67,6 @@ class Parser:
             self._handle_reduce(state)
 
         elif action == Actions.SHIFT:
-            self.tree.push(Node(str(self.current_token)))
             self.stack.push(self.current_token)
             self.stack.push(state)
             self._set_next_token()
@@ -107,7 +85,6 @@ class Parser:
             error_handler.write_syntax_error(
                 f"#{self._get_line_number()} : {str(SyntaxErrors.UNEXPECTED_EOF)}"
             )
-            self.tree = Stack()
             return True
 
         error_handler.write_syntax_error(
@@ -119,7 +96,6 @@ class Parser:
         state = self.stack.get()
         goto = self.table.goto(state)
         while not goto:
-            self.tree.pop()
             self.stack.pop()
             error_handler.write_syntax_error(
                 f"{str(SyntaxErrors.DISCARDED)} {self.stack.pop()} from stack"
@@ -134,7 +110,6 @@ class Parser:
                 error_handler.write_syntax_error(
                     f"#{self._get_line_number()} : {str(SyntaxErrors.UNEXPECTED_EOF)}"
                 )
-                self.tree = Stack()
                 return True
             error_handler.write_syntax_error(
                 f"#{self._get_line_number()} : {str(SyntaxErrors.DISCARDED)} {self.current_token.lexeme} from input"
@@ -144,7 +119,6 @@ class Parser:
 
         self.stack.push(non_terminal)
         self.stack.push(next_state)
-        self.tree.push(Node(str(non_terminal)))
         error_handler.write_syntax_error(
             f"#{self._get_line_number()} : {str(SyntaxErrors.MISSING)} {non_terminal}"
         )
