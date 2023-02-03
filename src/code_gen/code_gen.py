@@ -57,6 +57,9 @@ class CodeGenerator:
             "69": self._push,
             "70": self._save,
             "71": self._jpf_save,
+            "72": self._switch,
+            "73": self._case,
+            "74": self._default,
         }
         self._symbol_table_next_addr = 0
         self._temp_addr = 500
@@ -64,6 +67,8 @@ class CodeGenerator:
         self._ss = []
 
         self._pb = []
+
+        self._is_first_case = True
 
     @property
     def top(self):
@@ -149,5 +154,31 @@ class CodeGenerator:
 
     def _print(self, _):
         self._pb.append(AddressCode(Actions.PRINT, self._ss[self.top]))
+        self._ss.pop()
+        self._ss.pop()
+
+    def _switch(self, _):
+        self._is_first_case = True
+
+    def _case(self, num_str: str):
+        num = f"#{num_str}"
+        if not self._is_first_case:
+            self._default(num_str)
+
+        top = self.top
+        temp = self._get_temp()
+        self._pb.append(AddressCode(Actions.EQ, self._ss[top], num, temp))
+        self._ss.append(temp)
+        self._ss.append(self.i)
+        self._pb.append(None)
+        self._is_first_case = False
+
+    def _default(self, _):
+        top = self.top
+        self._pb[self._ss[top]] = AddressCode(
+            Actions.JPF,
+            self._ss[top - 1],
+            self.i,
+        )
         self._ss.pop()
         self._ss.pop()

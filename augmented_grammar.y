@@ -54,14 +54,14 @@ iteration_stmt: "while" '(' expression ')' statement
 return_stmt: "return" ';'
 | "return" expression ';'
 ;
-switch_stmt: "switch" '(' expression ')' '{' case_stmts default_stmt '}'
+switch_stmt: SWITCH "switch" '(' expression ')' '{' case_stmts default_stmt '}'
 ;
 case_stmts: case_stmts case_stmt
 | /* epsilon */
 ;
-case_stmt: "case" NUM ':' statement_list
+case_stmt: "case" CASE NUM ':' statement_list
 ;
-default_stmt: "default" ':' statement_list
+default_stmt: "default" DEFAULT ':' statement_list
 | /* epsilon */
 ;
 expression: var '=' expression
@@ -110,5 +110,11 @@ PUSH: /* epsilon */
 SAVE: /* epsilon */
 ;
 JPF_SAVE: /* epsilon */
+;
+SWITCH: /* epsilon */
+;
+CASE: /* epsilon */
+;
+DEFAULT: /* epsilon */
 ;
 %%
