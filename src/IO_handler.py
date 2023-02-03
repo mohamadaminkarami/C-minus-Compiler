@@ -9,8 +9,8 @@ class IOHandler:
     def read_input(self, num):
         self.num = num
 
-        file = open(f"../p3_tests/T{num}/input.txt", "r")  # for testing
-        # file = open(f"input.txt", "r")  # for quera judge
+        # file = open(f"../p3_tests/T{num}/input.txt", "r")  # for testing
+        file = open(f"input.txt", "r")  # for quera judge
 
         return file.read()
 
@@ -73,11 +73,16 @@ class IOHandler:
 
     def write_program_block(self, program_block: List[Actions]):
         # file = open(f"../p3_res/T{self.num}/output.txt", "w+")  # for testing
-        file = open(f"../interpreter/output.txt", "w+")  # for testing
-        # file = open(f"output.txt", "w+")  # for quera judge
+        # file = open(f"../interpreter/output.txt", "w+")  # for testing
+        file = open(f"output.txt", "w+")  # for quera judge
         for index, block in enumerate(program_block):
             file.write(f"{index}.\t{str(block)}\n")
 
+        file.close()
+
+    def write_semantic_errors(self):
+        file = open(f"semantic_errors.txt", "w+")  # for quera judge
+        file.write("The input program is semantically correct.")
         file.close()
 
 

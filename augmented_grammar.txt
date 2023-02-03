@@ -11,7 +11,7 @@
 11. local_declarations -> local_declarations var_declaration | Epsilon
 12. statement_list -> statement_list statement | Epsilon
 13. statement -> expression_stmt | compound_stmt | selection_stmt | iteration_stmt | return_stmt | switch_stmt
-14. expression_stmt -> expression ; | break ; | ;
+14. expression_stmt -> expression ; | break ;#BREAK | ;
 15. selection_stmt -> if ( expression ) #SAVE statement endif #JPF | if ( expression ) #SAVE statement else #JPF_SAVE statement endif #JP
 16. iteration_stmt -> while #LABEL ( expression ) #SAVE statement #WHILE
 17. return_stmt -> return ; | return expression ;

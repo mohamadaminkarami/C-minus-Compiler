@@ -1,4 +1,5 @@
 from symbol_table import symbol_table, SymbolTableRow
+from typing import List
 
 
 class Actions:
@@ -46,9 +47,11 @@ class CodeGenerator:
     def __init__(self) -> None:
         self.mapping = {
             "28": self._pop,
+            "29": self._break,
             "31": self._jpf,
             "32": self._jp,
             "33": self._while,
+            "36": self._end_switch,
             "42": self._assign,
             "45": self._arr_element,
             "46": self._op,
@@ -74,6 +77,8 @@ class CodeGenerator:
 
         self._is_first_case = True
 
+        self._break_labels: List[List[int]] = []
+
     @property
     def top(self):
         return len(self._ss) - 1
@@ -83,7 +88,7 @@ class CodeGenerator:
         return len(self._pb)
 
     def generate(self, state: str, input: str):
-        print(self.mapping[state].__name__, input)
+        # print(self.mapping[state].__name__, input)
         self.mapping[state](input)
 
     def get_code_gen_states(self):
@@ -164,6 +169,7 @@ class CodeGenerator:
         # self._ss.pop()
 
     def _switch(self, _):
+        self._break_labels.append([])
         self._is_first_case = True
 
     def _case(self, num_str: str):
@@ -206,6 +212,14 @@ class CodeGenerator:
             self._ss[top - 1],
             self.i + 1,
         )
+
+        break_labels = self._break_labels.pop()
+
+        for label in break_labels:
+            self._pb[label] = AddressCode(
+                Actions.JP,
+                self.i + 1,
+            )
         self._pb.append(AddressCode(Actions.JP, self._ss[top - 2]))
         self._ss.pop()
         self._ss.pop()
@@ -215,13 +229,25 @@ class CodeGenerator:
         self._ss.pop()
 
     def _label(self, _):
+        self._break_labels.append([])
         self._ss.append(self.i)
 
     def print_ss(self):
-
         print("ss: ", self._ss)
 
     def print_pb(self):
-
         for index, block in enumerate(self._pb):
             print(f"{index}\t {str(block)}")
+
+    def _break(self, _):
+        self._break_labels[-1].append(self.i)
+        self._pb.append(None)
+
+    def _end_switch(self, _):
+        break_labels = self._break_labels.pop()
+
+        for label in break_labels:
+            self._pb[label] = AddressCode(
+                Actions.JP,
+                self.i,
+            )

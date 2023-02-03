@@ -14,6 +14,7 @@ class Compiler:
     def compile(self):
         self.parser.parse()
         IO_handler.write_program_block(self.parser.get_program_block())
+        IO_handler.write_semantic_errors()
 
 
 if __name__ == "__main__":

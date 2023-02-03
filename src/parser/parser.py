@@ -82,9 +82,9 @@ class Parser:
         elif action == Actions.REDUCE:
             if state in self.CODE_GEN_STATES:
                 self._handle_code_gen(state)
-                self._code_gen.print_ss()
-                self._code_gen.print_pb()
-                print("table", symbol_table)
+                # self._code_gen.print_ss()
+                # self._code_gen.print_pb()
+                # print("table", symbol_table)
             self._handle_reduce(state)
 
         elif action == Actions.SHIFT:
