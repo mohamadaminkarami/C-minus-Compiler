@@ -48,6 +48,7 @@ class CodeGenerator:
             "31": self._jpf,
             "32": self._jp,
             "42": self._assign,
+            "45": self._arr_element,
             "46": self._op,
             "50": self._op,
             "54": self._op,
@@ -98,8 +99,10 @@ class CodeGenerator:
     def _assign(self, _):
         top = self.top
         self._pb.append(AddressCode(Actions.ASSIGN, self._ss[top], self._ss[top - 1]))
+        rhs = self._ss[top]
         self._ss.pop()
         self._ss.pop()
+        self._ss.append(rhs)
 
     def _push(self, lexeme: str):
         if lexeme.isnumeric():
@@ -173,6 +176,16 @@ class CodeGenerator:
         self._pb.append(None)
         self._is_first_case = False
 
+    def _arr_element(self, _):
+        top = self.top
+        temp1 = self._get_temp()
+        self._pb.append(AddressCode(Actions.MULT, self._ss[top], "#4", temp1))
+        temp2 = self._get_temp()
+        self._pb.append(AddressCode(Actions.ADD, f"#{self._ss[top - 1]}", temp1, temp2))
+        self._ss.pop()
+        self._ss.pop()
+        self._ss.append(f"@{temp2}")
+
     def _default(self, _):
         top = self.top
         self._pb[self._ss[top]] = AddressCode(
@@ -182,3 +195,12 @@ class CodeGenerator:
         )
         self._ss.pop()
         self._ss.pop()
+
+    def print_ss(self):
+
+        print("ss: ", self._ss)
+
+    def print_pb(self):
+
+        for index, block in enumerate(self._pb):
+            print(f"{index}\t {str(block)}")
