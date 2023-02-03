@@ -35,8 +35,8 @@ class AddressCode:
     def __init__(self, action, k1, k2=None, k3=None) -> None:
         self.action = action
         self.k1 = k1
-        self.k2 = k2 or " "
-        self.k3 = k3 or " "
+        self.k2 = k2 if k2 != None else " "
+        self.k3 = k3 if k3 != None else " "
 
     def __str__(self) -> str:
         return f"({self.action}, {self.k1}, {self.k2}, {self.k3} )"
@@ -45,8 +45,10 @@ class AddressCode:
 class CodeGenerator:
     def __init__(self) -> None:
         self.mapping = {
+            "28": self._pop,
             "31": self._jpf,
             "32": self._jp,
+            "33": self._while,
             "42": self._assign,
             "45": self._arr_element,
             "46": self._op,
@@ -61,6 +63,7 @@ class CodeGenerator:
             "72": self._switch,
             "73": self._case,
             "74": self._default,
+            "75": self._label,
         }
         self._symbol_table_next_addr = 0
         self._temp_addr = 500
@@ -133,7 +136,7 @@ class CodeGenerator:
 
     def _jpf(self, _):
         top = self.top
-        self._pb[self._ss[top]] = (Actions.JPF, self._ss[top - 1], self.i)
+        self._pb[self._ss[top]] = AddressCode(Actions.JPF, self._ss[top - 1], self.i)
         self._ss.pop()
         self._ss.pop()
 
@@ -158,7 +161,7 @@ class CodeGenerator:
     def _print(self, _):
         self._pb.append(AddressCode(Actions.PRINT, self._ss[self.top]))
         self._ss.pop()
-        self._ss.pop()
+        # self._ss.pop()
 
     def _switch(self, _):
         self._is_first_case = True
@@ -195,6 +198,24 @@ class CodeGenerator:
         )
         self._ss.pop()
         self._ss.pop()
+
+    def _while(self, _):
+        top = self.top
+        self._pb[self._ss[top]] = AddressCode(
+            Actions.JPF,
+            self._ss[top - 1],
+            self.i + 1,
+        )
+        self._pb.append(AddressCode(Actions.JP, self._ss[top - 2]))
+        self._ss.pop()
+        self._ss.pop()
+        self._ss.pop()
+
+    def _pop(self, _):
+        self._ss.pop()
+
+    def _label(self, _):
+        self._ss.append(self.i)
 
     def print_ss(self):
 

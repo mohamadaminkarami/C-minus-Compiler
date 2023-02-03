@@ -49,7 +49,7 @@ expression_stmt: expression ';'
 selection_stmt: "if" '(' expression ')' SAVE statement "endif"
 | "if" '(' expression ')' SAVE statement "else" JPF_SAVE statement "endif"
 ;
-iteration_stmt: "while" '(' expression ')' statement
+iteration_stmt: "while" LABEL '(' expression ')' SAVE statement
 ;
 return_stmt: "return" ';'
 | "return" expression ';'
@@ -116,5 +116,7 @@ SWITCH: /* epsilon */
 CASE: /* epsilon */
 ;
 DEFAULT: /* epsilon */
+;
+LABEL: /* epsilon */
 ;
 %%

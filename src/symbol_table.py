@@ -44,8 +44,9 @@ class SymbolTable:
     def __str__(self) -> str:
         s = f"current_address: {self.current_address}\n"
         for row in self._table:
-            s += str(row)
-            s += "\n"
+            if row.address != -1:
+                s += str(row)
+                s += "\n"
 
         return s
 

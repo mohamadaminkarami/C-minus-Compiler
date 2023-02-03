@@ -72,7 +72,8 @@ class IOHandler:
         file.close()
 
     def write_program_block(self, program_block: List[Actions]):
-        file = open(f"../p3_res/T{self.num}/output.txt", "w+")  # for testing
+        # file = open(f"../p3_res/T{self.num}/output.txt", "w+")  # for testing
+        file = open(f"../interpreter/output.txt", "w+")  # for testing
         # file = open(f"output.txt", "w+")  # for quera judge
         for index, block in enumerate(program_block):
             file.write(f"{index}.\t{str(block)}\n")
